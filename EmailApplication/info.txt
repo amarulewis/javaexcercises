@@ -1,0 +1,6 @@
+First name:Amaru
+Last name:Lewis
+Emailamaru.lewis@development.itsamaru.com
+Password:!vIMzxdU
+Capacity500
+Alternate email:null
