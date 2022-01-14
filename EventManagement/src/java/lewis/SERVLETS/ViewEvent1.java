@@ -1,15 +1,16 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
 package lewis.SERVLETS;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import lewis.DBSUPPORT.DBSupport;
 
 /**
  *
@@ -17,20 +18,11 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class ViewEvent1 extends HttpServlet {
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
+
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
@@ -43,43 +35,64 @@ public class ViewEvent1 extends HttpServlet {
         }
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);
+        
+        response.setContentType("text/html;charset=UTF-8");
+        PrintWriter out = response.getWriter();
+
+        out.println("<!DOCTYPE html>");
+        out.println("<html>");
+        out.println("<head>");
+        out.println("<title>Event Page</title>");
+        out.println("<link rel=\"stylesheet\" href=\"total.css\">");
+        out.println("<link href=\"https://fonts.googleapis.com/css2?family=Balsamiq+Sans&display=swap\" rel=\"stylesheet\">");
+        out.println("</head>");
+        out.println("<body>");
+        out.println("<h1>Servlet ViewEvent1 at " + request.getContextPath() + "</h1>");
+        out.println("</body>");
+        out.println("</html>");
+        try{
+                Connection conn = DBSupport.establishConnection();
+                Statement use = conn.createStatement();
+                use.execute("USE EventDatabase");
+                
+                response.setContentType("text/html;charset=UTF-8");
+                String query = "Select * FROM Event";
+                Statement queryStatement = conn.createStatement();
+                ResultSet rs = queryStatement.executeQuery(query);
+                
+                out.println("<center><h1>Event Details</h1></center>");
+                out.println("<br>");
+                out.println("<div>");
+                out.println("<center>");
+                out.println("<table border=1 width=50% height=50%>");  
+                out.println("<tr><th>EventNumber</th><th>EventName</th><th>Coordinator</th><th>Coordinator Contact</th><th>Fees</th><th>Venue</th><th>Date</th>"); 
+                out.println("<center><h1>Event Added</h1><center>");
+                
+                while (rs.next()){
+                    String en = rs.getString("enum");
+                    String ename = rs.getString("ename");
+                    String coord = rs.getString("coord");
+                    String coordnum = rs.getString("coordnum");
+                    String fee = rs.getString("fee");
+                    String venue = rs.getString("venue");
+                    String edate = rs.getString("edate");
+                    out.println("<tr><td>" + en + "</td><td>" + ename +"</td><td>"+coord+"</td><td>"+coordnum+"</td><td>"+fee+"</td><td>"+venue+"</td><td>"+edate+"</td></tr>");   
+                    
+                }
+                conn.commit();
+                conn.close();
+                out.println("</table>"); 
+                out.println("</center>");
+                out.print("</body>");
+                out.print("</html>"); 
+                
+        }catch (Exception e){
+            System.out.println(e);
+        }
+            
+        };
     }
-
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
-    }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
-}
